@@ -16,6 +16,9 @@ let cont = 0;
 let costoTotal = 0;
 let totalEnProductos = 0;
 
+// Crear arreglo para web storage, almacenará elementos de la tablaListaCompras
+let datos = new Array();
+
 // Para validar cantidad de txtNumber
 function validarCantidad(){
 
@@ -83,6 +86,17 @@ btnAgregar.addEventListener("click", function(event){
                     <td>${precio}</td>
                    </tr>`;
         cuerpoTabla.insertAdjacentHTML("beforeend", row);
+
+        // Crear un objeto de arreglo para almacenar en el Storage
+        let elemento =  {
+                          "cont" : cont,
+                          "nombre" : txtName.value,
+                          "cantidad" : txtNumber.value,
+                          "precio" : precio
+                        };
+
+        datos.push(elemento);
+        localStorage.setItem("datos", JSON.stringify(datos));
         
         // Llenado de los campos Total en Productos y Precio Total
         costoTotal += precio * Number(txtNumber.value);
@@ -91,16 +105,55 @@ btnAgregar.addEventListener("click", function(event){
         productosTotal.innerText = totalEnProductos;
         contadorProductos.innerText = cont;
 
-        
-        
+        // Limpieza de campos una vez que doy click en añadir producto
         txtName.value = "";
         txtNumber.value = "";
         txtName.focus();
         
+        // Creación de objeto para almacenar resumen de compra en Web Storage
+        let resumen = {
+            "cont" : cont,
+            "totalEnProductos" : totalEnProductos,
+            "costoTotal" : costoTotal
+            };
+        localStorage.setItem("resumen", JSON.stringify(resumen));
 
     }// if isValid
 
-}); // btn Agregar
+}); // btn Agregar Event Click
+
+// Evento de recarga de página para cargar la información del Web Storage
+window.addEventListener("load", function(event){
+    event.preventDefault();
+
+    // Acomodo de datos del storage a Datos
+    if(this.localStorage.getItem("datos") != null){
+        datos = JSON.parse(this.localStorage.getItem("datos"));
+    }; // datos != null
+    datos.forEach((d) => {
+        let row = `<tr>
+                    <td>${d.cont}</td>
+                    <td>${d.nombre}</td>
+                    <td>${d.cantidad}</td>
+                    <td>${d.precio}</td>
+                   </tr>`;
+        cuerpoTabla.insertAdjacentHTML("beforeend", row)               
+    });
+
+    // Acomodo de datos del storage a Resumen
+    if(this.localStorage.getItem("resumen") != null){
+        let resumen = JSON.parse(this.localStorage.getItem("resumen"));
+        costoTotal = resumen.costoTotal;
+        totalEnProductos = resumen.totalEnProductos;
+        cont = resumen.cont;
+    }; // resumen != null
+    
+    precioTotal.innerText = "$ " + costoTotal.toFixed(2);
+    productosTotal.innerText = totalEnProductos;
+    contadorProductos.innerText = cont;    
+
+}); // Event Load
+
 
 btnClear.addEventListener("click", function (event){  // Botón limpiar
     event.preventDefault();
