@@ -154,11 +154,37 @@ window.addEventListener("load", function(event){
 
 }); // Event Load
 
-
 btnClear.addEventListener("click", function (event){  // Botón limpiar
     event.preventDefault();
 
     // Para limpiar los campos de las etiquetas table data <td>
-    cuerpoTabla.insertAdjacentHTML = "";
+    // Limpiar Campos
+    txtName.value = "";
+    txtNumber.value = "";
+
+    // Limpiar Alerta
+    alertValidacionesTexto.innerHTML = "";
+    alertValidaciones.style.display="none";
+    txtName.style.border= "";
+    txtNumber.style.border= "";
+
+    // Limpiar Resumen
+    precioTotal.innerText = "";
+    productosTotal.innerText = "";
+    contadorProductos.innerText = "";
+
+    // Limpiar Tabla
+    cuerpoTabla.innerHTML = "";
+
+    // Limpiar datos de arreglo y contadores
+    datos = [];
+    cont = 0;
+    totalEnProductos = 0;
+    costoTotal = 0;
+
+    // Local Storage
+    localStorage.removeItem("datos");
+    localStorage.removeItem("resumen");
+
 }); // Botón limpiar
 
